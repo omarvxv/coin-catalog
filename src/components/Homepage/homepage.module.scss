@@ -1,0 +1,38 @@
+.searchLine{
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 50;
+}
+
+.content{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 60px;
+  .section{
+    display: flex;
+    flex-direction: column;
+    min-width: 240px;
+    h4{
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 28px;
+      color: #000000;
+      margin-bottom: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    a{
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 15px;
+      color: #000000;
+    }
+    img{
+      height: 214px;
+      width: 214px;
+      margin-top: 10px;
+    }
+  }
+}

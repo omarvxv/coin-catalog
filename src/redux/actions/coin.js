@@ -1,0 +1,114 @@
+import * as types from "../constants";
+import {notify} from "./notification";
+
+const closeEditor = () => ({
+    type: types.CLOSE_EDITOR
+});
+
+const showCoin = (coin) => ({
+    type: types.SHOW_COIN,
+    payload: {coin}
+})
+
+export const changeHandler = e => ({
+    type: types.EDIT_FORM,
+    payload: {
+        [e.target.name]: e.target.value
+    }
+});
+
+export const clearFields = () => ({
+    type: types.CLOSE_EDITOR
+})
+
+export const clearCoinInfo = () => ({
+    type: types.CLEAR_COIN_CACHE
+})
+
+
+export const addCoin = coin => dispatch => {
+    const token = localStorage.getItem('token');
+
+    return fetch('http://localhost:3001/coins/add/', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({...coin, token})
+    })
+        .then(res => res.json())
+        .then(res => {
+            dispatch(closeEditor());
+            dispatch({
+                type: types.ADD_COIN,
+                payload: {coin: res.coin}
+            })
+            dispatch(notify(res.message));
+        })
+}
+
+export const editCoin = editedCoin => dispatch => {
+    const token = localStorage.getItem('token');
+
+    return fetch('http://localhost:3001/coins/' + editedCoin.id, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({...editedCoin, token})
+    })
+        .then(res => res.json())
+        .then(res => {
+            dispatch(notify(res.message));
+            if(res.edited){
+                dispatch(closeEditor());
+                dispatch({
+                    type: types.EDIT_COIN,
+                    payload: {coin: res.coin}
+                })
+            }
+        })
+}
+
+export const deleteCoin = id => dispatch => {
+    const token = localStorage.getItem('token');
+
+    return fetch('http://localhost:3001/coins/' + id, {
+        method: 'DELETE',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({token})
+    })
+        .then(res => res.json())
+        .then(res => {
+            dispatch(notify(res.message));
+            dispatch({
+                type: types.DELETE_COIN,
+                payload: {id}
+            })
+        })
+}
+
+export const getCoinInfo = (id, seen = false) => dispatch => {
+    const headers = seen ? {seen} : {};
+    return fetch('http://localhost:3001/coins/' + id,{
+        headers: {
+            ...headers
+        }
+    })
+        .then(res => res.json())
+        .then(coin => {
+            dispatch(showCoin(coin))
+            if(seen){
+                const recentlyWatched = [];
+                if(localStorage.getItem('recently')){
+                    recentlyWatched.push(...JSON.parse(localStorage.getItem('recently')));
+                }
+                if(!recentlyWatched.find(item => item.id === coin.id)){
+                    recentlyWatched.unshift(coin);
+                    localStorage.setItem('recently', JSON.stringify(recentlyWatched));
+                }
+            }
+        })
+}

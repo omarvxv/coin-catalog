@@ -1,0 +1,94 @@
+.auth {
+  width: fit-content;
+  margin: 120px auto 0;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  button {
+    justify-self: center;
+    align-self: center;
+    margin-top: 10px;
+  }
+}
+
+.list {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  height: 290px;
+  overflow: hidden;
+  width: max-content;
+  transition: all .1s linear;
+
+  &:hover {
+    overflow-y: auto;
+  }
+
+  .coin {
+    width: 674px;
+    display: flex;
+    justify-content: space-between;
+    margin-right: 40px;
+  }
+}
+
+.addCoin {
+  width: 374px;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 20px;
+
+  .round {
+    width: 120px;
+    height: 120px;
+    border: 1px solid black;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+  }
+
+  .link {
+    width: 224px;
+    display: flex;
+    align-items: center;
+
+    a {
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 15px;
+      text-decoration-line: underline;
+      color: #000000;
+    }
+  }
+}
+
+.fieldsScreen{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 20px;
+  min-width: 1182px;
+  .column{
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .fields{
+      height: 244px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .buttons{
+      align-self: center;
+      a{
+        text-decoration: none;
+
+      }
+    }
+  }
+}

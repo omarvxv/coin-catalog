@@ -1,0 +1,15 @@
+.hierarchy{
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 11px;
+  a{
+    text-decoration-line: underline;
+    color: #B1ABAB;
+  }
+  color: #B1ABAB;
+}
+.listContainer{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 40px;
+}

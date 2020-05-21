@@ -1,0 +1,32 @@
+.preview{
+  margin-bottom: 25px;
+  height: 120px;
+  width: 374px;
+  display: flex;
+  justify-content: space-between;
+  img{
+    width: 120px;
+    height: 120px;
+  }
+  .shortInfo{
+    width: 224px;
+    a{
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 19px;
+      color: #833AE0;
+      text-decoration: none;
+    }
+    img{
+      width: 20px;
+      height: 20px;
+      margin: 0 2px -5px 10px;
+    }
+    .about{
+      margin-top: 5px;
+      font-size: 12px;
+      line-height: 15px;
+      color: #000000;
+    }
+  }
+}

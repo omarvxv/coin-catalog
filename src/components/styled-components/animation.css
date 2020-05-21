@@ -1,0 +1,134 @@
+@keyframes advancedDisplay {
+    0%{
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.searchLine-enter{
+    opacity: 0;
+    transform: translateY(-100px);
+}
+
+.searchLine-enter-active{
+    opacity: 1;
+    transition: opacity 1s;
+    animation: advancedDisplay 300ms ease-out forwards;
+}
+
+.searchLine-enter-done{
+    transform: translateY(0);
+}
+
+.searchLine-exit-active{
+    opacity: 0;
+    transition: opacity 1s;
+    animation: advancedDisplay 300ms ease-in alternate-reverse;
+}
+
+.searchLine-exit-done {
+    opacity: 0;
+    transform: translateY(-100px);
+}
+
+.dropdown-enter{
+    opacity: 0;
+}
+
+.dropdown-enter-active{
+    opacity: 1;
+    transition: opacity .2s;
+}
+
+.dropdown-exit{
+    opacity: 1;
+}
+
+.dropdown-exit-active{
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+.dropdown-exit-done {
+    opacity: 0;
+}
+
+@keyframes notify {
+    0%{
+        opacity: 0;
+        transform: translate(-50%, -50px);
+    }
+    100%{
+        opacity: 1;
+        transform: translate(-50%, 25px);
+    }
+}
+
+.notification-enter{
+    opacity: 0;
+    transform: translate(-50%, -50px);
+}
+
+.notification-enter-active{
+    opacity: 1;
+    transition: opacity 1s;
+    animation: notify 500ms ease-out forwards;
+}
+
+.notification-enter-done{
+    transform: translate(-50%, 25px);
+}
+
+.notification-exit-active{
+    opacity: 0;
+    transition: opacity 1s;
+    animation: notify 400ms ease-in alternate-reverse;
+}
+
+.notification-exit-done {
+    opacity: 0;
+    transform: translate(-50%, -50px);
+}
+
+@keyframes recently {
+    from{
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(10px);
+    }
+}
+
+.recently-enter{
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.recently-enter-active{
+    opacity: 1;
+    transition: opacity 1s;
+    animation: recently 300ms ease-out forwards;
+}
+
+.recently-enter-done{
+    transform: translateY(10px);
+}
+
+.recently-exit-active{
+    opacity: 0;
+    transition: opacity 1s;
+    animation: recently 300ms ease-in alternate-reverse;
+}
+
+.recently-exit-done {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+
