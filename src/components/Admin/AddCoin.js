@@ -7,7 +7,7 @@ const AddCoin = ({addCoin, coin}) =>
     <Form {...{onSubmit: () => addCoin(coin)}}/>
 
 const mapStateToProps = state => ({
-    coin: state.showCoin.coin,
+    coin: state.coin.coin,
 });
 
 export default connect(mapStateToProps, {addCoin})(AddCoin);

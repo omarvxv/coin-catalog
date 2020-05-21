@@ -11,7 +11,7 @@ export function searchCriteria(state = initialState, action){
 
             }
         case types.SET_SEARCH_CRITERIA:
-            return {
+            return { // запись критериев для поиска в выпадающие списки Advanced filter
                 ...state,
                 searchCriteria: {
                     ...state.searchCriteria,

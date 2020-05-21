@@ -10,9 +10,9 @@ function CoinPreview({id, avers, name, shortdesc, seen, admin}) {
         <div className={Style.preview}>
             <Img src={avers} alt="avers" loader={<Skeleton circle={true} width={120} height={120}/>}/>
             <div className={Style.shortInfo}>
-                <Link to={"/coin-screen/"+id}>{name || <Skeleton />}</Link>
+                <Link to={"/coin-screen/" + id}>{name || <Skeleton/>}</Link>
                 {admin && <><img src={seenIcon} alt="seen"/>&nbsp;{seen}</>}
-                <p className={Style.about}>{shortdesc || <Skeleton count={2} />}</p>
+                <p className={Style.about}>{shortdesc || <Skeleton count={2}/>}</p>
             </div>
         </div>
     )

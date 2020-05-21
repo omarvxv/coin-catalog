@@ -5,4 +5,4 @@ import { auth } from "./auth";
 import { searchCriteria } from "./searchCriteria";
 import { notification } from "./notification";
 
-export const rootReducer = combineReducers({ coinList, showCoin: coin, auth, searchCriteria, notification });
+export const rootReducer = combineReducers({ coinList, coin, auth, searchCriteria, notification });

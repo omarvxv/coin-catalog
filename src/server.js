@@ -168,12 +168,14 @@ app.put('/coins/:id', (req, res) => {
     const token = req.body.token;
     const sqlToCheckToken = `SELECT id FROM \`tokens\` WHERE \`token\` = "${token}"`;
 
+    // получение данных из запроса по шаблону COIN_TEMPLATE
     for (let field in COIN_TEMPLATE) {
         if (req.body[field]) {
             coinData[field] = req.body[field];
         }
     }
 
+    // формирование sql запроса по введённым критериям
     const sql = `UPDATE \`coins\` SET ${[...[...Object.keys(coinData)]
                 .map(key => `\`${key}\` = "${coinData[key]}"`)]
                 .join(', ')} WHERE id = ${id}`;
@@ -251,6 +253,7 @@ app.post('/authentication/', (req, res) => {
     })
 })
 
+// получение критериев для поиска. данные записываются в Advanced filter
 app.get('/getCriteria/', (req, res) => {
     const sql = `SELECT \`country\`, \`quality\`, \`composition\` FROM \`coins\``;
 
@@ -262,6 +265,7 @@ app.get('/getCriteria/', (req, res) => {
                 quality = new Set(),
                 composition = new Set();
             data.map(coin => {
+                // для того чтобы данные не повторялись
                 country.add(coin.country);
                 quality.add(coin.quality);
                 composition.add(coin.composition);
@@ -276,6 +280,7 @@ app.get('/getCriteria/', (req, res) => {
     })
 })
 
+// запрос данных по всем возможным критериям
 app.post('/coins/', (req, res) => {
     const {limit, keyword, offset} = req.body.criteria;
     const sqlLimit = limit ? ` LIMIT ${limit} OFFSET ${offset || 0}` : '';
@@ -296,6 +301,7 @@ app.post('/coins/', (req, res) => {
         return `${sql}${filters.length ? filters.join(' AND ') + ' AND ' : ""}\`${field}\` LIKE "%${keyword}%"`;
     }
 
+    // получение существующиъ критериев поиска по шаблону CRITERIA_TEMPLATE
     for (let value in CRITERIA_TEMPLATE) {
         if (req.body.criteria[value]) {
             filters.push(sqlFilters(req.body.criteria)[value]);
@@ -306,8 +312,8 @@ app.post('/coins/', (req, res) => {
         sql += ' WHERE ';
         if (keyword) {
             sql = ['name', 'shortdesc', 'description']
-                .map(field => sqlFilterByKeyword(filters, field, keyword))
-                .join(' UNION ');
+                .map(field => sqlFilterByKeyword(filters, field, keyword)) // последовательность для приоритета поиска
+                .join(' UNION ');                                          // по ключевому слову
         } else {
             sql += filters.join(' AND ');
         }

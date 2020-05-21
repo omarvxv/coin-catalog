@@ -17,7 +17,7 @@ function Form({coin, changeHandler, onSubmit, getCoinInfo, clearFields, clearCoi
             clearCoinInfo();
         }
     }, []);
-
+    // query меняется при завершении запроса. см actions/coin.js :63
     return (!query || canceled) ? <Redirect to="/admin/"/> :
         <div className={Style.fieldsScreen}>
             <div className={Style.column}>
@@ -55,9 +55,9 @@ function Form({coin, changeHandler, onSubmit, getCoinInfo, clearFields, clearCoi
 }
 
 const mapStateToProps = state => ({
-    coin: state.showCoin.coin,
-    query: state.showCoin.query,
-    loaded: state.showCoin.loaded
+    coin: state.coin.coin,
+    query: state.coin.query,
+    loaded: state.coin.loaded
 })
 
 export default connect(mapStateToProps, {getCoinInfo, changeHandler, clearFields, clearCoinInfo})(Form);

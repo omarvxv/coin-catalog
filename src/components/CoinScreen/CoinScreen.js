@@ -72,7 +72,7 @@ function CoinScreen({getCoinInfo, coin, clearCoinInfo, ...ownProps}) {
 }
 
 const mapStateToProps = state => ({
-    coin: state.showCoin.coin,
+    coin: state.coin.coin,
 })
 
 export default connect(mapStateToProps, {getCoinInfo, clearCoinInfo})(CoinScreen);

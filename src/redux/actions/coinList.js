@@ -1,12 +1,12 @@
 import * as types from "../constants";
 import {notify} from "./notification";
 
-const setList = ({coins, count}) => ({
+const setList = ({coins, count}) => ({ // настраивает список монет
     type: types.SET_LIST,
     payload: {coins, count}
 })
 
-export const clearList = () => ({
+export const clearList = () => ({ // очищает список монет
     type: types.CLEAR_LIST
 })
 

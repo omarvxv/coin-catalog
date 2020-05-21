@@ -14,8 +14,8 @@ export const setCriteria = searchCriteria => ({
     payload: {searchCriteria}
 })
 
-const setSearchLine = (data) => ({
-    type: types.SET_SEARCH_LINE,
+const setSearchLine = (data) => ({ // запись критериев для выпадающих списков
+    type: types.SET_SEARCH_LINE,   // в поле Advanced filter
     payload: {...data}
 })
 
@@ -25,8 +25,8 @@ export const getCriteria = () => dispatch => {
         .then(({data}) => {
             for (let criteria in data) {
                 if (data.hasOwnProperty(criteria)) {
-                    data[criteria].unshift('')
-                }
+                    data[criteria].unshift('') // для того чтобы можно было обнулять
+                }                                     // критерию поиска в выпадающих списках
             }
             dispatch(setSearchLine(data));
         })

@@ -1,15 +1,13 @@
 import * as types from "../constants";
 import {notify} from "./notification";
 
-const closeEditor = () => ({
-    type: types.CLOSE_EDITOR
-});
-
-const showCoin = (coin) => ({
+// запись в store данных монеты
+const showCoin = coin => ({
     type: types.SHOW_COIN,
     payload: {coin}
 })
 
+// обработчик полей ввода формы
 export const changeHandler = e => ({
     type: types.EDIT_FORM,
     payload: {
@@ -17,6 +15,7 @@ export const changeHandler = e => ({
     }
 });
 
+// завершение редактирования / редактирования монеты
 export const clearFields = () => ({
     type: types.CLOSE_EDITOR
 })
@@ -38,7 +37,7 @@ export const addCoin = coin => dispatch => {
     })
         .then(res => res.json())
         .then(res => {
-            dispatch(closeEditor());
+            dispatch(clearFields());
             dispatch({
                 type: types.ADD_COIN,
                 payload: {coin: res.coin}
@@ -61,7 +60,7 @@ export const editCoin = editedCoin => dispatch => {
         .then(res => {
             dispatch(notify(res.message));
             if(res.edited){
-                dispatch(closeEditor());
+                dispatch(clearFields());
                 dispatch({
                     type: types.EDIT_COIN,
                     payload: {coin: res.coin}
@@ -91,7 +90,7 @@ export const deleteCoin = id => dispatch => {
 }
 
 export const getCoinInfo = (id, seen = false) => dispatch => {
-    const headers = seen ? {seen} : {};
+    const headers = seen ? {seen} : {}; // увеличивать кол-во просмотров, либо нет. см server.js 119 стр.
     return fetch('http://localhost:3001/coins/' + id,{
         headers: {
             ...headers

@@ -7,7 +7,7 @@ const EditCoin = ({coin, editCoin, id}) =>
     <Form {...{onSubmit: () => {editCoin(coin)}, id, edit: true}}/>
 
 const mapStateToProps = state => ({
-    coin: state.showCoin.coin,
+    coin: state.coin.coin,
 });
 
 export default connect(mapStateToProps, {editCoin})(EditCoin);
