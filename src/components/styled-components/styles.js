@@ -73,12 +73,11 @@ export const Filter = styled.div`
 
 export const AdvancedFilter = styled.div`
     position: absolute;
-    padding: 20px 25px;
+    padding: 30px 45px;
     left: -25px;
     z-index: 10;
     background-color: white;
-    width: 850px;
-    top: 110px;
+    top: 130px;
     grid-gap: 20px 30px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
