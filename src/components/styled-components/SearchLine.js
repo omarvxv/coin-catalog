@@ -11,7 +11,7 @@ import DropDown from "./DropDown";
 import {Link} from "react-router-dom";
 import {setCriteria} from "../../redux/actions/searchCriteria";
 
-function SearchLine({admin, isList, countries, qualities, compositions, setCriteria, criteria}) {
+function SearchLine({admin, homePage, countries, qualities, compositions, setCriteria, criteria}) {
     const [toggle, setToggle] = useState(false),
         [keyword, setKeyword] = useState((criteria.keyword) || ''),
         [country, setCountry] = useState((!admin && criteria.country) || ''),
@@ -29,7 +29,7 @@ function SearchLine({admin, isList, countries, qualities, compositions, setCrite
     }
 
     return <SearchForm>
-        <SearchField isList={isList}>
+        <SearchField homePage={homePage}>
             <InputField value={keyword} onChange={e => setKeyword(e.target.value)}>Input field</InputField>
             <Link to={!admin ? "/list/" : "/admin/"}>
                 <Button onClick={search} type="submit">Search</Button>

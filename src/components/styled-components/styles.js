@@ -44,12 +44,12 @@ export const SearchField = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 25px;
+    margin-top: 15px;
     a{
         text-decoration: none;
     }
-    ${({isList})=> isList && css`
-    margin-top: 15px;
+    ${({homePage})=> homePage && css`
+    margin-top: 25px;
   `}
 `;
 
@@ -126,6 +126,17 @@ export const HeaderBlock = styled.div`
     display: flex;
     justify-content: space-between;
     `;
+
+export const Hierarchy = styled.div`
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 11px;
+    a{
+        text-decoration-line: underline;
+        color: #B1ABAB;
+    }
+    color: #B1ABAB;
+`;
 
 export const Admin = styled.span`
     font-weight: 300;
