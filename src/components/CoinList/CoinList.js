@@ -4,10 +4,10 @@ import Style from './list.module.scss';
 import {connect} from 'react-redux';
 import SearchLine from "../styled-components/SearchLine";
 import CoinPreview from "../CoinPreview/CoinPreview";
-import Skeleton from "react-loading-skeleton/lib";
 import Pagination from "../Pagination/Pagination";
 import {clearList, getCoins} from "../../redux/actions/coinList";
 import {clearCriteria} from "../../redux/actions/searchCriteria";
+import CoinListGhost from "./CoinListGhost";
 
 function CoinList({getCoins, list, clearList, searchCriteria, ...props}) {
 
@@ -18,9 +18,12 @@ function CoinList({getCoins, list, clearList, searchCriteria, ...props}) {
 
     return <div className="container">
                 <PageHeader showLink>List of the coins</PageHeader>
-                <SearchLine isList/>
+                <SearchLine/>
                 <div className={Style.listContainer}>
-                    {list.map(coin => coin.id ? <CoinPreview key={coin.id} {...coin}/> : <Skeleton height={120} width={374}/>)}
+                    {list.length ?
+                        list.map(coin => <CoinPreview key={coin.id} {...coin}/>) :
+                        <CoinListGhost/>
+                    }
                 </div>
                 <Pagination/>
             </div>

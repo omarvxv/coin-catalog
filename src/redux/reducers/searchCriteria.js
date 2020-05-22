@@ -16,7 +16,8 @@ export function searchCriteria(state = initialState, action){
                 searchCriteria: {
                     ...state.searchCriteria,
                     ...action.payload.searchCriteria,
-                }
+                },
+                group: '',
             }
         case types.SET_OFFSET:
             return{
