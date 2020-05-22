@@ -5,13 +5,12 @@ const initialState = {countries: [], qualities: [], compositions: [], searchCrit
 export function searchCriteria(state = initialState, action){
     switch(action.type){
         case types.SET_SEARCH_LINE:
-            return{
+            return{ // запись критериев для поиска в выпадающие списки Advanced filter
                 ...state,
-                ...action.payload,
-
+                ...action.payload
             }
         case types.SET_SEARCH_CRITERIA:
-            return { // запись критериев для поиска в выпадающие списки Advanced filter
+            return {
                 ...state,
                 searchCriteria: {
                     ...state.searchCriteria,
