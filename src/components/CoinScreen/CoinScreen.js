@@ -19,8 +19,8 @@ function CoinScreen({getCoinInfo, coin, clearCoinInfo, ...ownProps}) {
     return <div className={Style.screen}>
                 <div className={Style.coinScreen}>
                     <div className={Style.image}>
-                        <Img src={avers} alt="avers" loading="lazy" loader={<Skeleton circle={true} height={300} width={300}/>}/>
-                        <Img src={revers} alt="revers" loading="lazy" loader={<Skeleton circle={true} height={300} width={300}/>}/>
+                        <Img src={avers} alt="avers" loading="lazy" loader={<Skeleton circle={true} height="18.75rem" width="18.75rem"/>}/>
+                        <Img src={revers} alt="revers" loading="lazy" loader={<Skeleton circle={true} height="18.75rem" width="18.75rem"/>}/>
                     </div>
                     <div className={Style.aboutCoin}>
                         <div className={Style.container}>

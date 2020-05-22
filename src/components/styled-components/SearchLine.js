@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import InputField from "./InputField";
-import {AdvancedFilter, Button, Filter, SearchForm, SearchField} from "./styles";
+import {AdvancedFilter, Button, Filter, SearchForm, SearchField, AdvancedFilterColumn} from "./styles";
 import {connect} from 'react-redux';
 import './animation.css';
 import {CSSTransition} from "react-transition-group";
@@ -41,11 +41,15 @@ function SearchLine({admin, homePage, countries, qualities, compositions, setCri
         </Filter>}
         <CSSTransition in={toggle} classNames="searchLine" timeout={500} mountOnEnter unmountOnExit>
             <AdvancedFilter>
-                <DropDown value={country} setField={setCountry} values={countries}>Issuing country</DropDown>
-                <IntervalField setFrom={setPriceFrom} valueFrom={priceFrom} setTo={setPriceTo} valueTo={priceTo}>Price</IntervalField>
-                <DropDown value={composition} setField={setComposition} values={compositions}>Metal</DropDown>
-                <IntervalField setFrom={setYearFrom} valueFrom={yearFrom} setTo={setYearTo} valueTo={yearTo}>Year of issue</IntervalField>
-                <DropDown value={quality} setField={setQuality} values={qualities}>Quality of the coin</DropDown>
+                <AdvancedFilterColumn>
+                    <DropDown value={country} setField={setCountry} values={countries}>Issuing country</DropDown>
+                    <DropDown value={composition} setField={setComposition} values={compositions}>Metal</DropDown>
+                    <DropDown value={quality} setField={setQuality} values={qualities}>Quality of the coin</DropDown>
+                </AdvancedFilterColumn>
+                <AdvancedFilterColumn>
+                    <IntervalField setFrom={setPriceFrom} valueFrom={priceFrom} setTo={setPriceTo} valueTo={priceTo}>Price</IntervalField>
+                    <IntervalField setFrom={setYearFrom} valueFrom={yearFrom} setTo={setYearTo} valueTo={yearTo}>Year of issue</IntervalField>
+                </AdvancedFilterColumn>
             </AdvancedFilter>
         </CSSTransition>
     </SearchForm>

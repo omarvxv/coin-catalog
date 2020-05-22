@@ -1,31 +1,31 @@
 .preview{
-  margin-bottom: 25px;
-  height: 120px;
-  width: 374px;
+  margin-bottom: 1.56rem;
+  height: 7.5rem;
+  width: 23.375rem;
   display: flex;
   justify-content: space-between;
   img{
-    width: 120px;
-    height: 120px;
+    width: 7.5rem;
+    height: 7.5rem;
   }
   .shortInfo{
-    width: 224px;
+    width: 14rem;
     a{
       font-weight: bold;
-      font-size: 16px;
-      line-height: 19px;
+      font-size: 1rem;
+      line-height: 1.19em;
       color: #833AE0;
       text-decoration: none;
     }
     img{
-      width: 20px;
-      height: 20px;
-      margin: 0 2px -5px 10px;
+      width: 1.25rem;
+      height: 1.25rem;
+      margin: 0 0.125rem -0.3125rem 0.625rem;
     }
     .about{
-      margin-top: 5px;
-      font-size: 12px;
-      line-height: 15px;
+      margin-top: 0.3125rem;
+      font-size: 0.75rem;
+      line-height: 1.25em;
       color: #000000;
     }
   }

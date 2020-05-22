@@ -5,10 +5,10 @@ import Skeleton from "react-loading-skeleton/lib";
 function CoinPreviewGhost() {
     return (
         <div className={Style.preview}>
-            <Skeleton circle={true} width={120} height={120}/>
+            <Skeleton circle={true} width="7.5rem" height="7.5rem"/>
             <div className={Style.shortInfo}>
-                <Skeleton width={150} height={20}/>
-                <Skeleton count={2} width={200} height={15}/>
+                <Skeleton width="9.375rem" height="1.25rem"/>
+                <Skeleton count={2} width="12.5rem" height="1rem"/>
             </div>
         </div>
     )
