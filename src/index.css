@@ -6,7 +6,7 @@
 }
 
 html{
-  min-width: 390px;
+  min-width: 380px;
 }
 
 .container{
@@ -35,13 +35,13 @@ html{
   overflow-x: auto;
 }
 
-@media screen and (max-width: 320px){
+@media screen and (max-width: 380px){
   html{
     font-size: 7px;
   }
 }
 
-@media screen and (min-width: 320px) and (max-width: 480px){
+@media screen and (min-width: 380px) and (max-width: 480px){
   html{
     font-size: 8px;
   }
