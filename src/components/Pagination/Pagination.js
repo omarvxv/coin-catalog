@@ -1,12 +1,10 @@
 import ReactPaginate from 'react-paginate';
 import './paginate.scss';
-import {connect} from 'react-redux';
-import React, {useEffect, useState} from "react";
-import {setOffset} from "../../redux/actions/coinList";
+import { connect } from 'react-redux';
+import React, { useEffect } from "react";
+import { pageChange } from "../../redux/actions/coinList";
 
-function Pagination({count, limit, pageChange, setLimit}){
-
-    const [coinCount, setCoinCount] = useState(limit);
+function Pagination({count, limit, pageChange}){
 
     useEffect(() => {
         return () => pageChange(0);
@@ -15,7 +13,6 @@ function Pagination({count, limit, pageChange, setLimit}){
     const pagesCount = count/limit;
 
     return pagesCount > 0 ?
-        <div className="paginate">
         <ReactPaginate
         previousLabel={'previous'}
         nextLabel={'next'}
@@ -28,12 +25,7 @@ function Pagination({count, limit, pageChange, setLimit}){
         containerClassName={'pagination'}
         subContainerClassName={'pages pagination'}
         activeClassName={'active'}
-    /> <input type="number"
-              max={count}
-              value={coinCount}
-              onChange={e => setCoinCount(e.target.value)}
-              onBlur={e => {if(limit !== e.target.value) setLimit(e)}} />
-    </div> : null;
+    /> : null;
 }
 
 const mapStateToProps = state => ({
@@ -42,4 +34,4 @@ const mapStateToProps = state => ({
     offset: state.searchCriteria.offset,
 })
 
-export default connect(mapStateToProps, setOffset)(Pagination);
+export default connect(mapStateToProps, { pageChange })(Pagination);

@@ -101,12 +101,12 @@ export const getCoinInfo = (id, seen = false) => dispatch => {
             dispatch(showCoin(coin))
             if(seen){
                 const recentlyWatched = [];
-                if(localStorage.getItem('recently')){
-                    recentlyWatched.push(...JSON.parse(localStorage.getItem('recently')));
+                if(sessionStorage.getItem('recently')){
+                    recentlyWatched.push(...JSON.parse(sessionStorage.getItem('recently')));
                 }
                 if(!recentlyWatched.find(item => item.id === coin.id)){
                     recentlyWatched.unshift(coin);
-                    localStorage.setItem('recently', JSON.stringify(recentlyWatched));
+                    sessionStorage.setItem('recently', JSON.stringify(recentlyWatched));
                 }
             }
         })

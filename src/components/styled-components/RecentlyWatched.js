@@ -8,7 +8,7 @@ import {Link} from "react-router-dom";
 
 function RecentlyWatched() {
     const [toggle, setToggle] = useState(false);
-    const content = JSON.parse(localStorage.getItem('recently'));
+    const content = JSON.parse(sessionStorage.getItem('recently'));
     return (
         <>
             <RecentlyLink onClick={() => setToggle(!toggle)}>Recently

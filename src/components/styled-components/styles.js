@@ -86,7 +86,7 @@ export const AdvancedFilter = styled.div`
     left: -1.56em;
     z-index: 10;
     background-color: white;
-    top: 8.125em;
+    top: calc(100% + 1.1rem);
     grid-gap: 1.25em 1.875em;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -229,6 +229,7 @@ export const DropDownItem = styled.div`
     padding: 1.25em 0.9375em;
     font-size: 1rem;
     transition: all .1s linear;
+    text-transform: capitalize;
     &:hover{
     opacity: 0.8;
 `;
