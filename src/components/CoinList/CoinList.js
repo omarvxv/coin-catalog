@@ -19,7 +19,7 @@ function CoinList({getCoins, list, clearList, count, limit, setLimit, searchCrit
     }, [searchCriteria, limit]);
 
     return <div className="container">
-                <PageHeader showLink>List of the coins</PageHeader>
+                <PageHeader>List of the coins</PageHeader>
                 <SearchLine/>
                 <div className={Style.limit}>
                     Coins on page:&nbsp;<input type="number"

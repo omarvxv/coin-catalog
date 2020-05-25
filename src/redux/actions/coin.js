@@ -37,12 +37,14 @@ export const addCoin = coin => dispatch => {
     })
         .then(res => res.json())
         .then(res => {
-            dispatch(clearFields());
-            dispatch({
-                type: types.ADD_COIN,
-                payload: {coin: res.coin}
-            })
             dispatch(notify(res.message));
+            if(res.added){
+                dispatch(clearFields());
+                dispatch({
+                    type: types.ADD_COIN,
+                    payload: {coin: res.coin}
+                })
+            }
         })
 }
 
@@ -82,10 +84,12 @@ export const deleteCoin = id => dispatch => {
         .then(res => res.json())
         .then(res => {
             dispatch(notify(res.message));
-            dispatch({
-                type: types.DELETE_COIN,
-                payload: {id}
-            })
+            if(res.deleted){
+                dispatch({
+                    type: types.DELETE_COIN,
+                    payload: {id}
+                })
+            }
         })
 }
 

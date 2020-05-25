@@ -30,7 +30,7 @@ const CRITERIA_TEMPLATE = {
 
 app.post('/auth/', (req, res) => {
     const {login, password} = req.body;
-    const sqlToGetUser = `SELECT salt, password, login FROM \`users\` WHERE login = "${login}"`;
+    const sqlToGetUser = `SELECT salt, password, login, id FROM \`users\` WHERE login = "${login}"`;
 
     pool.query(sqlToGetUser, (err, data) => {
         if (err) {
@@ -39,6 +39,8 @@ app.post('/auth/', (req, res) => {
             res.status(404).json({message: 'Invalid username'});
         } else {
             const salt = data[0].salt;
+            const id = data[0].id;
+            const role = id === 1 ? 'admin' : 'user';
             if (hashSync(password, salt) === data[0].password) {
                 pool.query(`SELECT id FROM \`tokens\` WHERE login = "${login}"`, (err, data) => {
                     if (err) {
@@ -51,12 +53,13 @@ app.post('/auth/', (req, res) => {
                         })
                     }
                     const token = randomString();
-                    pool.query(`INSERT INTO \`tokens\` (\`token\`, \`login\`) VALUES ("${token}", "${login}")`, err => {
+                    pool.query(`INSERT INTO \`tokens\` (\`token\`, \`login\`, \`role\`) VALUES ("${token}", "${login}", "${role}")`, err => {
                         if (err) {
                             res.status(400).json({message: 'An error occurred while registering the token'})
                         } else {
                             res.status(200).json({
                                 authorised: true,
+                                role,
                                 token,
                                 login,
                                 message: 'You have successfully logged in'
@@ -95,7 +98,7 @@ app.post('/registration/', (req, res) => {
                         if (err) {
                             res.status(500).json({message: 'An error occurred while retrieving data'})
                         } else {
-                            res.status(200).json({data, message: 'You have successfully registered'});
+                            res.status(200).json({data, message: 'You have successfully registered', registered: true});
                         }
                     })
                 }
@@ -126,7 +129,7 @@ app.get('/coins/:id', (req, res) => {
 
 app.post('/coins/add/', (req, res) => {
     const token = req.body.token;
-    const sqlToCheckToken = `SELECT id FROM \`tokens\` WHERE \`token\` = "${token}"`;
+    const sqlToCheckToken = `SELECT role FROM \`tokens\` WHERE \`token\` = "${token}"`;
     const coinData = {...COIN_TEMPLATE};
 
     for (let field in coinData) {
@@ -142,7 +145,7 @@ app.post('/coins/add/', (req, res) => {
     pool.query(sqlToCheckToken, (err, data) => {
         if (err) {
             res.status(500).json({message: 'An error occurred while requesting data'})
-        } else if (data.length === 0) {
+        } else if (data.length === 0 || data[0].role !== 'admin') {
             res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
         } else {
             pool.query(sql, (err) => {
@@ -153,7 +156,7 @@ app.post('/coins/add/', (req, res) => {
                         if (err) {
                             res.status(500).json({message: 'An error occurred while retrieving data'});
                         } else {
-                            res.status(200).json({coin: data[0], message: `Coin ${data[0].name} has been successfully added.`, sql});
+                            res.status(200).json({coin: data[0], added: true, message: `Coin ${data[0].name} has been successfully added.`});
                         }
                     })
                 }
@@ -166,7 +169,7 @@ app.put('/coins/:id', (req, res) => {
     const id = req.params.id;
     const coinData = {};
     const token = req.body.token;
-    const sqlToCheckToken = `SELECT id FROM \`tokens\` WHERE \`token\` = "${token}"`;
+    const sqlToCheckToken = `SELECT role FROM \`tokens\` WHERE \`token\` = "${token}"`;
 
     // получение данных из запроса по шаблону COIN_TEMPLATE
     for (let field in COIN_TEMPLATE) {
@@ -183,7 +186,7 @@ app.put('/coins/:id', (req, res) => {
     pool.query(sqlToCheckToken, (err, data) => {
         if (err) {
             res.status(500).json({message: 'An error occurred while requesting data'})
-        } else if (data.length === 0) {
+        } else if (data.length === 0 || data[0].role !== 'admin') {
             res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
         } else {
             pool.query(sql, err => {
@@ -206,14 +209,14 @@ app.put('/coins/:id', (req, res) => {
 app.delete('/coins/:id', (req, res) => {
     const id = req.params.id;
     const token = req.body.token;
-    const sqlToCheckToken = `SELECT id FROM \`tokens\` WHERE \`token\` = "${token}"`;
+    const sqlToCheckToken = `SELECT role FROM \`tokens\` WHERE \`token\` = "${token}"`;
     const sqlToGetCoin = `SELECT * FROM \`coins\` WHERE id = "${id}"`;
     const sqlToDeleteCoin = `DELETE FROM \`coins\` WHERE id = "${id}"`;
 
     pool.query(sqlToCheckToken, (err, data) => {
         if (err) {
             res.status(500).json({message: 'An error occurred while requesting data'})
-        } else if (data.length === 0) {
+        } else if (data.length === 0 || data[0].role !== 'admin') {
             res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
         } else {
             pool.query(sqlToGetCoin, (err, data) => {
@@ -226,7 +229,7 @@ app.delete('/coins/:id', (req, res) => {
                         if (err) {
                             res.status(500).json({message: 'An error occurred while deleting data.'})
                         } else {
-                            res.status(200).json({data, message: `Coin ${data[0].name} removed successfully`});
+                            res.status(200).json({data, deleted: true, message: `Coin ${data[0].name} removed successfully`});
                         }
                     })
                 }
@@ -237,7 +240,7 @@ app.delete('/coins/:id', (req, res) => {
 
 app.post('/authentication/', (req, res) => {
     const token = req.body.token;
-    const sqlToCheckToken = `SELECT login, token FROM \`tokens\` WHERE token = "${token}"`;
+    const sqlToCheckToken = `SELECT login, token, role FROM \`tokens\` WHERE token = "${token}"`;
 
     pool.query(sqlToCheckToken, (err, data) => {
         if (err) {
@@ -246,7 +249,10 @@ app.post('/authentication/', (req, res) => {
             res.status(401).json({authorised: false, message: 'You are not authorized'})
         } else {
             res.status(200).json({
-                authorised: true, login: data[0].login, token: data[0].token,
+                authorised: true,
+                login: data[0].login,
+                token: data[0].token,
+                role: data[0].role,
                 message: 'You have successfully logged in'
             });
         }

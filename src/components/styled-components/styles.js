@@ -135,7 +135,17 @@ export const Buttons = styled.div`
 
 export const HeaderBlock = styled.div`
     display: flex;
-    justify-content: space-between;
+    position: relative;
+    img{
+        margin: -0.3rem 0.3rem 0 auto;
+        width: 2rem;
+        height: 2rem;
+    }
+    a{
+        height: fit-content;
+        width: fit-content;
+        text-decoration: none;
+    }
 `;
 
 export const PageName = styled.div`
@@ -163,8 +173,8 @@ export const Admin = styled.span`
     font-weight: 300;
     font-size: 1.25rem;
     line-height: 1.375em;
-    text-decoration-line: underline;
     color: #000000;
+    cursor: pointer;
 `;
 
 export const Description = styled.textarea`
@@ -291,5 +301,33 @@ export const RecentlyLink = styled.button`
     &:hover{
         background-color: #833AE0;
         color: white;
+    }
+`;
+
+export const AccountCommands = styled.div`
+    width: fit-content;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid darkgray;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    position: absolute;
+    top: 1.8rem;
+    overflow: hidden;
+    right: 0;
+    z-index: 51;
+    background-color: white;
+    a{
+        width: 100%;
+        border-bottom: 1px solid darkgray;
+        color: darkgray;
+        text-decoration: none;
+        padding: 0.75em 1em;
+        font-size: 1.2rem;
+        text-align: center;
+        transition: all .1s linear;
+        &:hover{
+            color: rgba(0,0,0,0.9);
+        }
     }
 `;

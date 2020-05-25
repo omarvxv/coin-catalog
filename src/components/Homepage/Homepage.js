@@ -12,7 +12,7 @@ const groups = [
 ]
 
 export default () => <div className="container">
-                        <PageHeader showLink homePage>Homepage</PageHeader>
+                        <PageHeader homePage>Homepage</PageHeader>
                         <div className={Style.searchLine}>
                             <SearchLine advanced={false} homePage/>
                             <RecentlyWatched/>

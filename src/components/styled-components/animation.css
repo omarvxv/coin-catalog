@@ -132,3 +132,41 @@
 }
 
 
+@keyframes user {
+    from{
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(10px);
+    }
+}
+
+.user-enter{
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.user-enter-active{
+    opacity: 1;
+    transition: opacity 1s;
+    animation: user 300ms ease-out forwards;
+}
+
+.user-enter-done{
+    transform: translateY(10px);
+}
+
+.user-exit-active{
+    opacity: 0;
+    transition: opacity 1s;
+    animation: user 300ms ease-in alternate-reverse;
+}
+
+.user-exit-done {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+

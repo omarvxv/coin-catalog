@@ -9,10 +9,36 @@ export const typeToLogin = e => ({
     }
 })
 
-const auth = authorised => ({
+const auth = ({authorised, role}) => ({
     type: types.AUTH,
-    payload: {authorised}
+    payload: {authorised, role}
 })
+
+export const logout = () => dispatch => {
+    dispatch({type: types.LOGOUT});
+    dispatch(notify('You have successfully logged out'))
+    localStorage.removeItem('token');
+    localStorage.removeItem('login');
+}
+
+export const registration = userData => dispatch => {
+    return fetch('http://localhost:3001/registration', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    })
+        .then(res => res.json())
+        .then(data => {
+            dispatch(notify(data.message));
+            if(data.registered){
+                dispatch({
+                    type: types.REGISTERED
+                })
+            }
+        })
+}
 
 export const authorization = userData => dispatch => {
     return fetch('http://localhost:3001/auth/', {
@@ -23,14 +49,12 @@ export const authorization = userData => dispatch => {
         body: JSON.stringify(userData)
     })
         .then(res => res.json())
-        .then(({token, login, message, authorised}) => {
+        .then(({token, login, message, authorised, role}) => {
             if (authorised) {
                 localStorage.setItem('token', token);
                 localStorage.setItem('login', login);
-                dispatch(auth(true));
-            } else {
-                dispatch(auth(false));
             }
+            dispatch(auth({authorised, role}));
             dispatch(notify(message));
         })
 }
@@ -48,13 +72,13 @@ export const authentication = () => dispatch => {
         body: JSON.stringify({token})
     })
         .then(res => res.json())
-        .then(res => {
-            dispatch(auth(res.authorised));
-            dispatch({type: types.VERIFY})
-            dispatch(notify(res.message));
-            if (res.authorised) {
-                localStorage.setItem('token', res.token);
-                localStorage.setItem('login', res.login);
+        .then(({authorised, role, message, token, login}) => {
+            dispatch(auth({authorised, role}));
+            dispatch({type: types.VERIFY});
+            dispatch(notify(message));
+            if (authorised) {
+                localStorage.setItem('token', token);
+                localStorage.setItem('login', login);
             }
         })
 }
