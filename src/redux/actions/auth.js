@@ -49,10 +49,11 @@ export const authorization = userData => dispatch => {
         body: JSON.stringify(userData)
     })
         .then(res => res.json())
-        .then(({token, login, message, authorised, role}) => {
+        .then(({token, login, message, authorised, role, id}) => {
             if (authorised) {
                 localStorage.setItem('token', token);
                 localStorage.setItem('login', login);
+                localStorage.setItem('id', id);
             }
             dispatch(auth({authorised, role}));
             dispatch(notify(message));

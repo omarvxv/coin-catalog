@@ -21,3 +21,6 @@ export const REGISTERED = 'REGISTERED';
 export const TYPE_TO_AUTH = 'TYPE_TO_AUTH';
 export const NOTIFY = 'NOTIFY';
 export const CLOSE_NOTIFICATION = 'CLOSE_NOTIFICATION';
+export const ADD_COMMENT = 'ADD_COMMENT';
+export const SET_COMMENT_LIST = 'SET_COMMENT_LIS';
+export const CLEAR_COMMENT_LIST = 'CLEAR_COMMENT_LIST';

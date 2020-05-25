@@ -59,6 +59,7 @@ app.post('/auth/', (req, res) => {
                         } else {
                             res.status(200).json({
                                 authorised: true,
+                                id,
                                 role,
                                 token,
                                 login,
@@ -336,6 +337,63 @@ app.post('/coins/', (req, res) => {
                     res.status(404).json({coins: [], message: 'No coins found for these criteria', notfound: true})
                 } else {
                     res.status(200).json({coins: data, count: count.length});
+                }
+            })
+        }
+    })
+})
+
+app.post('/add-comment/', (req, res) => {
+    const {userid, comment, type, user, coinid, token} = req.body;
+    const sqlToCheckToken = `SELECT id FROM \`tokens\` WHERE \`token\` = "${token}"`;
+    const sqlToAddComment = type === 'coin' ?
+        `INSERT INTO \`comments\` (\`user\`, \`userid\`, \`comment\`, \`type\`, \`coinid\`) 
+        VALUES ("${user}", "${userid}", "${comment}", "${type}", "${coinid}")` :
+        `INSERT INTO \`comments\` (\`user\`, \`userid\`, \`comment\`) VALUES ("${user}", "${userid}", "${comment}")`;
+    const sqlToGetComment = `SELECT * FROM \`comments\` ORDER BY id DESC LIMIT 1`;
+
+    pool.query(sqlToCheckToken, (err, data) => {
+        if(err){
+            res.status(500).json({message: 'An error occurred while requesting data'})
+        }else if(data.length === 0){
+            res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'});
+        }else{
+            pool.query(sqlToAddComment, err => {
+                if(err){
+                    res.status(500).json({message: 'An error occurred while requesting data'})
+                }else{
+                    pool.query(sqlToGetComment, (err, data) => {
+                        if(err){
+                            res.status(500).json({message: 'An error occurred while requesting data'})
+                        }else{
+                            res.status(200).json({added: true, comment: data[0]})
+                        }
+                    })
+                }
+            })
+        }
+    })
+})
+
+app.post('/get-comments/', (req, res) => {
+    const {token, coinid} = req.body;
+    const sqlToCheckToken = `SELECT id FROM \`tokens\` WHERE \`token\` = "${token}"`;
+    let sqlToGetComments = `SELECT * FROM \`comments\` WHERE \`type\` = "blog"`;
+    if(coinid !== null){
+        sqlToGetComments = `SELECT * FROM \`comments\` WHERE \`type\` = "coin" AND coinid = "${coinid}"`;
+    }
+
+    pool.query(sqlToCheckToken, (err, data) => {
+        if(err){
+            res.status(500).json({comments: [], message: 'An error occurred while requesting data'});
+        }else if(data.length === 0){
+            res.status(401).json({comments: [], message: 'You do not have sufficient permissions to perform this operation'});
+        }else{
+            pool.query(sqlToGetComments, (err, data) => {
+                if(err){
+                    res.status(500).json({comments: [], message: 'An error occurred while requesting data'});
+                }else{
+                    res.status(200).json({comments: data});
                 }
             })
         }

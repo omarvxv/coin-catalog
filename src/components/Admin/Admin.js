@@ -14,14 +14,14 @@ import {authentication} from "../../redux/actions/auth";
 import {deleteCoin} from "../../redux/actions/coin";
 import {clearList, getCoins} from "../../redux/actions/coinList";
 
-function Admin({authorised, checking, list, getCoins, deleteCoin, authentication, clearList, keyword}) {
+function Admin({authorised, checking, list, getCoins, deleteCoin, authentication, clearList, keyword, role}) {
 
     useEffect(() => {
         !authorised ? authentication() : getCoins({keyword});
         return clearList;
     }, [authorised, keyword]);
 
-    return checking ? <Skeleton/> : authorised ?
+    return checking ? <Skeleton/> : authorised && role === 'admin' ?
         <div className="container">
             <PageHeader>Admin panel</PageHeader>
             <Switch>
@@ -50,6 +50,7 @@ function Admin({authorised, checking, list, getCoins, deleteCoin, authentication
 
 const mapStateToProps = state => ({
     list: state.coinList.list,
+    role: state.auth.role,
     authorised: state.auth.authorised,
     checking: state.auth.checking,
     keyword: state.searchCriteria.searchCriteria.keyword

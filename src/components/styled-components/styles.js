@@ -136,23 +136,13 @@ export const Buttons = styled.div`
 export const HeaderBlock = styled.div`
     display: flex;
     position: relative;
-    img{
-        margin: -0.3rem 0.3rem 0 auto;
-        width: 2rem;
-        height: 2rem;
-    }
-    a{
-        height: fit-content;
-        width: fit-content;
-        text-decoration: none;
-    }
 `;
 
 export const PageName = styled.div`
     transition: font-size .2s linear;
     font-weight: 300;
     font-size: 3.125rem;
-    line-height: 1.06em;
+    line-height: 1.1em;
     color: #000000;
     white-space: nowrap;
 `;
@@ -169,12 +159,30 @@ export const Hierarchy = styled.div`
     color: #B1ABAB;
 `;
 
-export const Admin = styled.span`
+export const User = styled.span`
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    height: fit-content;
+    img{
+        margin: 0 0.3rem 0 auto;
+        width: 2rem;
+        height: 2rem;
+    }
+    a{
+        height: fit-content;
+        width: fit-content;
+        text-decoration: none;
+    }
+`;
+
+export const UserName = styled.div`
     font-weight: 300;
     font-size: 1.25rem;
     line-height: 1.375em;
     color: #000000;
     cursor: pointer;
+    height: fit-content;
 `;
 
 export const Description = styled.textarea`
@@ -208,6 +216,7 @@ export const DropDownLine = styled.div`
     cursor: pointer;
     display: flex;
     align-items: center;
+    text-transform: capitalize;
     img{
         position: absolute;
         top: 50%;
@@ -320,9 +329,9 @@ export const AccountCommands = styled.div`
     a{
         width: 100%;
         border-bottom: 1px solid darkgray;
-        color: darkgray;
+        color: rgba(0,0,0,0.6);
         text-decoration: none;
-        padding: 0.75em 1em;
+        padding: 0.5em 2em;
         font-size: 1.2rem;
         text-align: center;
         transition: all .1s linear;
