@@ -21,7 +21,7 @@ export const setLimit = e => ({
 })
 
 export const getCoins = criteria => dispatch => {
-    return fetch('http://localhost:3001/coins/', {
+    return fetch('/coins/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'

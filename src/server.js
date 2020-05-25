@@ -2,8 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
+const path = require('path');
 const {genSaltSync, hashSync} = require('bcrypt');
+const port = process.env.PORT || 3001;
 const randomString = require('./randomString');
+const publicPath = path.join(__dirname, '..', 'build');
 
 const app = express();
 
@@ -14,6 +17,7 @@ const pool = mysql.createPool({
     database: 'coin_catalog'
 });
 
+app.use(express.static(publicPath));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors());
@@ -400,6 +404,10 @@ app.post('/get-comments/', (req, res) => {
     })
 })
 
-app.listen(3001, () => {
+app.get('*', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+});
+
+app.listen(port, () => {
     console.log('Server is running')
 });

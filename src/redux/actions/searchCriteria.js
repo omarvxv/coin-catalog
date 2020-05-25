@@ -20,7 +20,7 @@ const setSearchLine = (data) => ({ // запись критериев для в�
 })
 
 export const getCriteria = () => dispatch => {
-    return fetch('http://localhost:3001/getCriteria/')
+    return fetch('/getCriteria/')
         .then(res => res.json())
         .then(({data}) => {
             for (let criteria in data) {

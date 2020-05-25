@@ -28,7 +28,7 @@ export const clearCoinInfo = () => ({
 export const addCoin = coin => dispatch => {
     const token = localStorage.getItem('token');
 
-    return fetch('http://localhost:3001/coins/add/', {
+    return fetch('/coins/add/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
@@ -51,7 +51,7 @@ export const addCoin = coin => dispatch => {
 export const editCoin = editedCoin => dispatch => {
     const token = localStorage.getItem('token');
 
-    return fetch('http://localhost:3001/coins/' + editedCoin.id, {
+    return fetch('/coins/' + editedCoin.id, {
         method: 'PUT',
         headers: {
             'Content-type': 'application/json'
@@ -74,7 +74,7 @@ export const editCoin = editedCoin => dispatch => {
 export const deleteCoin = id => dispatch => {
     const token = localStorage.getItem('token');
 
-    return fetch('http://localhost:3001/coins/' + id, {
+    return fetch('/coins/' + id, {
         method: 'DELETE',
         headers: {
             'Content-type': 'application/json'
@@ -95,7 +95,7 @@ export const deleteCoin = id => dispatch => {
 
 export const getCoinInfo = (id, seen = false) => dispatch => {
     const headers = seen ? {seen} : {}; // увеличивать кол-во просмотров, либо нет. см server.js 119 стр.
-    return fetch('http://localhost:3001/coins/' + id,{
+    return fetch('/coins/' + id,{
         headers: {
             ...headers
         }

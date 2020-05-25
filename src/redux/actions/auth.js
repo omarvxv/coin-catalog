@@ -22,7 +22,7 @@ export const logout = () => dispatch => {
 }
 
 export const registration = userData => dispatch => {
-    return fetch('http://localhost:3001/registration', {
+    return fetch('/registration/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
@@ -41,7 +41,7 @@ export const registration = userData => dispatch => {
 }
 
 export const authorization = userData => dispatch => {
-    return fetch('http://localhost:3001/auth/', {
+    return fetch('/auth/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
@@ -65,7 +65,7 @@ export const authentication = () => dispatch => {
     // состояние проверки. на стр 53 снимается
     dispatch({type: types.CHECK_TOKEN})
 
-    return fetch('http://localhost:3001/authentication/', {
+    return fetch('/authentication/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
