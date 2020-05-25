@@ -26,8 +26,9 @@ CREATE TABLE `tokens` (
   `id` int NOT NULL AUTO_INCREMENT,
   `token` varchar(255) NOT NULL,
   `login` varchar(255) NOT NULL,
+  `role` varchar(255) NOT NULL DEFAULT 'user',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,7 +37,7 @@ CREATE TABLE `tokens` (
 
 LOCK TABLES `tokens` WRITE;
 /*!40000 ALTER TABLE `tokens` DISABLE KEYS */;
-INSERT INTO `tokens` VALUES (1,'ee180fdee8b5e8d40adf00de150fae73cea2c77ce007bc3f51e6f64a8042081bcb1c0067783a48ca6a33b3','Admin');
+INSERT INTO `tokens` VALUES (70,'5a880b12f7d87ea8aa8fae6d3b3a4214b6b168d358b358a4ee708114afd61748657af8d72ef7eab48b104e2aa210e67500e74c68b','Admin','admin');
 /*!40000 ALTER TABLE `tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-21 13:02:09
+-- Dump completed on 2020-05-25 23:40:56
