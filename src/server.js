@@ -1,20 +1,25 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
 const path = require('path');
 const {genSaltSync, hashSync} = require('bcrypt');
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
+const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_USER = process.env.DB_USER || 'root';
+const DB_PASSWORD = process.env.DB_PASSWORD || '1346794613';
+const DATABASE = process.env.DATABASE || 'coin_catalog';
 const randomString = require('./randomString');
 const publicPath = path.join(__dirname, '..', 'build');
 
 const app = express();
 
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '1346794613',
-    database: 'coin_catalog'
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DATABASE
 });
 
 app.use(express.static(publicPath));
@@ -408,6 +413,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-app.listen(port, () => {
-    console.log('Server is running')
+app.listen(PORT, () => {
+    console.log('Server is running on port ' + PORT)
 });
