@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import './animation.css'
-import {RecentlyBlock, RecentlyLink} from "./styles";
+import './animation.css';
+import recently from '../../img/recently.png';
+import {RecentlyBlock, RecentlyCount, RecentlyIcon, RecentlyLink} from "./styles";
 import {CSSTransition} from "react-transition-group";
 import Img from "react-image";
 import Skeleton from "react-loading-skeleton";
@@ -11,8 +12,12 @@ function RecentlyWatched() {
     const content = JSON.parse(sessionStorage.getItem('recently'));
     return (
         <>
-            <RecentlyLink onClick={() => setToggle(!toggle)}>Recently
-                watched {content ? content.length : ''}</RecentlyLink>
+            <RecentlyLink>
+                <RecentlyIcon onClick={() => setToggle(!toggle)}>
+                    <img src={recently} alt={recently} title="Recently watched"/>
+                    {content ? <RecentlyCount>{content.length}</RecentlyCount> : ''}
+                </RecentlyIcon>
+            </RecentlyLink>
             <CSSTransition in={content && toggle}
                            classNames="recently"
                            timeout={200}
@@ -20,7 +25,7 @@ function RecentlyWatched() {
                            unmountOnExit>
                 <RecentlyBlock>
                     {content && content.map(coin =>
-                        <Link key={coin.id} title={coin.name} to={"/coin-screen/" + coin.id} >
+                        <Link key={coin.id} title={coin.name} to={"/coin-screen/" + coin.id}>
                             <Img src={coin.avers} alt="avers"
                                  loader={<Skeleton circle={true} width={120} height={120}/>}/>
                         </Link>)}

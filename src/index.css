@@ -34,19 +34,7 @@ html{
   overflow-x: auto;
 }
 
-@media screen and (max-width: 380px){
-  html{
-    font-size: 7px;
-  }
-}
-
-@media screen and (min-width: 380px) and (max-width: 480px){
-  html{
-    font-size: 8px;
-  }
-}
-
-@media screen and (min-width: 480px) and (max-width: 620px){
+@media screen and (max-width: 620px){
   html{
     font-size: 10px
   }

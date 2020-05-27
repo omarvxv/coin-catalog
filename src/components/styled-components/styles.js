@@ -293,24 +293,38 @@ export const RecentlyBlock = styled.div`
     }
 `;
 
-export const RecentlyLink = styled.button`
-    align-self: center;
-    padding: 0.9375em 1.25em;
-    transition: all .1s linear;
-    color: #833AE0;
-    cursor: pointer;
-    border-radius: 4px;
+export const RecentlyLink = styled.div`
     margin-top: 1.25em;
-    background-color: white;
-    font-size: 1rem;
-    border: none;
-    outline: none;
-    white-space: nowrap;
-    transition: font-size .2s linear;
-    &:hover{
-        background-color: #833AE0;
-        color: white;
+    display: flex;
+`;
+
+export const RecentlyIcon = styled.div`
+    align-self: center;
+    position: relative;
+    transition: all .2s linear;
+    img{
+        cursor: pointer;
+        width: 2.5rem;
+        height: 2.5rem;
     }
+    &:hover{
+        transform: scale(1.07);
+    }
+`;
+
+export const RecentlyCount = styled.div`
+    width: 1.5em;
+    height: 1.5em;
+    font-size: 0.75rem;
+    border-radius: 50%;
+    color: white;
+    background-color: #833AE0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -0.3em;
+    right: -0.4em;
 `;
 
 export const AccountCommands = styled.div`
