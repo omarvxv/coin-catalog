@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import PageHeader from "../styled-components/PageHeader";
 import InputField from "../styled-components/InputField";
 import {Redirect} from 'react-router-dom';
-import Style from './admin.module.scss'
+import Style from './login.module.scss'
 import {Button} from "../styled-components/styles";
 import {connect} from 'react-redux';
 import {authorization, typeToLogin, registration} from "../../redux/actions/auth";
@@ -11,7 +11,9 @@ function Login({ authorization, registration, registered, authorised, typeToLogi
     useEffect(() => {
         registered && setMode('login');
     }, [registered]);
+
     const [mode, setMode] = useState('login');
+
     const values = {
         text: mode === 'login' ? 'You don\'t have an account ? ' : 'You are have an account ? ',
         modeToChange: mode === 'login' ? 'registration' : 'login',

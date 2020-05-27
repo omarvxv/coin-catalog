@@ -3,14 +3,14 @@ import {Route} from "react-router-dom";
 import {connect} from 'react-redux';
 import './index.css';
 import Homepage from "./components/Homepage/Homepage";
-import Login from "./components/Admin/Login";
+import Login from "./components/Login/Login";
 import Admin from "./components/Admin/Admin";
 import CoinList from "./components/CoinList/CoinList";
 import CoinScreen from "./components/CoinScreen/CoinScreen";
 import Notification from "./components/styled-components/Notification";
 import {getCriteria} from "./redux/actions/searchCriteria";
 import { authentication, auth } from "./redux/actions/auth";
-import Feedback from "./components/Feedback/Feedback";
+import Feedback from "./components/Feedback";
 
 function App({getCriteria, authentication, auth}) {
 

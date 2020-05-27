@@ -62,7 +62,7 @@ export const authorization = userData => dispatch => {
 
 export const authentication = () => dispatch => {
     const token = localStorage.getItem('token');
-    // состояние проверки. на стр 53 снимается
+    // состояние проверки. на стр 78 снимается
     dispatch({type: types.CHECK_TOKEN})
 
     return fetch('/authentication/', {

@@ -1,0 +1,19 @@
+.auth {
+  width: fit-content;
+  margin: 7.5rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-row-gap: 1rem;
+
+  button {
+    justify-self: center;
+  }
+
+  .reg {
+    font-size: 1rem;
+    line-height: 1.07em;
+    text-decoration-line: underline;
+    color: #000000;
+    cursor: pointer;
+  }
+}

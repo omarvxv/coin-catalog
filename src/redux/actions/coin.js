@@ -94,7 +94,7 @@ export const deleteCoin = id => dispatch => {
 }
 
 export const getCoinInfo = (id, seen = false) => dispatch => {
-    const headers = seen ? {seen} : {}; // увеличивать кол-во просмотров, либо нет. см server.js 119 стр.
+    const headers = seen ? {seen} : {}; // увеличивать кол-во просмотров, либо нет. см server.js 234 стр.
     return fetch('/coins/' + id,{
         headers: {
             ...headers
