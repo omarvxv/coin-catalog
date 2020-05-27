@@ -9,7 +9,7 @@ export const typeToLogin = e => ({
     }
 })
 
-const auth = ({authorised, role}) => ({
+export const auth = ({authorised, role}) => ({
     type: types.AUTH,
     payload: {authorised, role}
 })

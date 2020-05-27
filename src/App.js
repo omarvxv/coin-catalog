@@ -9,13 +9,13 @@ import CoinList from "./components/CoinList/CoinList";
 import CoinScreen from "./components/CoinScreen/CoinScreen";
 import Notification from "./components/styled-components/Notification";
 import {getCriteria} from "./redux/actions/searchCriteria";
-import { authentication } from "./redux/actions/auth";
+import { authentication, auth } from "./redux/actions/auth";
 import Feedback from "./components/Feedback/Feedback";
 
-function App({getCriteria, authentication}) {
+function App({getCriteria, authentication, auth}) {
 
     useEffect(() => {
-        authentication();
+        localStorage.getItem('token') ? authentication() : auth({authorised: false, role: 'user'});
         getCriteria();
     }, []);
 
@@ -30,4 +30,4 @@ function App({getCriteria, authentication}) {
     </>
 }
 
-export default connect(null, {getCriteria, authentication})(App);
+export default connect(null, {getCriteria, authentication, auth})(App);
