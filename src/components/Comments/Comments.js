@@ -40,7 +40,7 @@ function Comments({comments, getComments, addComment, type, coinid, authorised, 
                     {type === 'coin' ? <>Add comment</> : <>Give feedback</>}
                 </button>
             </div>
-        </> : <span>This part is for authorized users. Please login</span>}
+        </> : <span>This part is for authorized users. Please sign in.</span>}
     </div>
 }
 
