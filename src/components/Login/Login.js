@@ -17,8 +17,8 @@ function Login({ authorization, registration, registered, authorised, typeToLogi
     const values = {
         text: mode === 'login' ? 'You don\'t have an account ? ' : 'You are have an account ? ',
         modeToChange: mode === 'login' ? 'registration' : 'login',
-        textOnButton: mode === 'login' ? 'Sign in' : 'Register',
-        textOnLink: mode === 'login' ? 'Register' : 'Sign in',
+        textOnButton: mode === 'login' ? 'Sign in' : 'Sign up',
+        textOnLink: mode === 'login' ? 'Sign up' : 'Sign in',
         onClick: () => {
             return mode === 'login' ?
             authorization({login, password}) :
