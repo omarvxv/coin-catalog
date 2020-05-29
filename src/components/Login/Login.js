@@ -30,7 +30,7 @@ function Login({ authorization, registration, registered, authorised, typeToLogi
                 <PageHeader>{mode === 'login' ? <>Sign in</> : <>Registration</>}</PageHeader>
                 <div className={Style.auth}>
                     <InputField name="login" value={login} onChange={typeToLogin}>Login</InputField>
-                    <InputField name="password" value={password} onChange={typeToLogin}>Password</InputField>
+                    <InputField type="password" name="password" value={password} onChange={typeToLogin}>Password</InputField>
                     <span>{values.text}
                         <span className={Style.reg}
                               onClick={() => setMode(values.modeToChange)}>{values.textOnLink}</span>
