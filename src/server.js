@@ -12,6 +12,7 @@ const DB_USER = process.env.DB_USER || 'root';
 const DB_PASSWORD = process.env.DB_PASSWORD || '1346794613';
 const DATABASE = process.env.DATABASE || 'coin_catalog';
 const publicPath = path.join(__dirname, '..', 'build');
+const {promisify} = require('util');
 
 const app = express();
 
@@ -21,6 +22,8 @@ const pool = mysql.createPool({
     password: DB_PASSWORD,
     database: DATABASE
 });
+
+const query = promisify(pool.query).bind(pool);
 
 app.use(express.static(publicPath));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -37,7 +40,7 @@ const CRITERIA_TEMPLATE = {
     priceTo: '', yearFrom: '', yearTo: '', group: ''
 }
 
-app.post('/registration/', (req, res) => {
+app.post('/registration/', async (req, res) => {
     const salt = genSaltSync(10);
     const {login, password} = req.body;
     const hashedPassword = hashSync(password, salt);
@@ -46,127 +49,90 @@ app.post('/registration/', (req, res) => {
 
     const sqlToGetUser = `SELECT id, login, password FROM \`users\` WHERE login = "${login}"`;
 
-    pool.query(sqlToGetUser, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while retrieving data'});
-        } else if (data.length > 0) {
-            res.status(400).json({message: 'User with this login already exists.'});
-        } else {
-            pool.query(sqlToRegistration, err => {
-                if (err) {
-                    res.status(500).json({message: 'An error occurred while writing data'})
-                } else {
-                    pool.query(sqlToGetUser, (err, data) => {
-                        if (err) {
-                            res.status(500).json({message: 'An error occurred while retrieving data'})
-                        } else {
-                            res.status(200).json({data, message: 'You have successfully registered', registered: true});
-                        }
-                    })
-                }
-            })
+    try {
+        const user = await query(sqlToGetUser);
+        if (user.length) {
+            return res.status(400).json({message: 'User with this login already exists.'});
         }
-    })
+        await query(sqlToRegistration);
+        const data = await query(sqlToGetUser);
+        res.status(200).json({data, message: 'You have successfully registered', registered: true});
+    } catch {
+        res.status(500).json({message: 'An error occurred while retrieving data'});
+    }
 })
 
-app.post('/auth/', (req, res) => {
+app.post('/auth/', async (req, res) => {
     const {login, password} = req.body;
     const sqlToGetUser = `SELECT salt, password, login, id FROM \`users\` WHERE login = "${login}"`;
+    const sqlToGetToken = `SELECT id FROM \`tokens\` WHERE login = "${login}"`;
 
-    pool.query(sqlToGetUser, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while retrieving data'});
-        } else if (data.length === 0) {
-            res.status(404).json({message: 'Invalid username'});
-        } else {
-            const salt = data[0].salt;
-            const id = data[0].id;
-            const role = id === 1 ? 'admin' : 'user';
-            if (hashSync(password, salt) === data[0].password) {
-                pool.query(`SELECT id FROM \`tokens\` WHERE login = "${login}"`, (err, data) => {
-                    if (err) {
-                        res.status(500).json({message: 'An error occurred while retrieving data'});
-                    } else if (data.length > 0) {
-                        pool.query(`DELETE FROM \`tokens\` WHERE id = ${data[0].id}`, err => {
-                            if (err) {
-                                res.status(500).json({message: 'Failed to complete receiving token operation'});
-                            }
-                        })
-                    }
-                    const token = randomString();
-                    pool.query(`INSERT INTO \`tokens\` (\`token\`, \`login\`, \`role\`) VALUES ("${token}", "${login}", "${role}")`, err => {
-                        if (err) {
-                            res.status(400).json({message: 'An error occurred while registering the token'})
-                        } else {
-                            res.status(200).json({
-                                authorised: true,
-                                id,
-                                role,
-                                token,
-                                login,
-                                message: 'You have successfully logged in'
-                            });
-                        }
-                    })
-                })
-            } else {
-                res.json({message: 'Password entered incorrectly'})
-            }
-
+    try {
+        const [user] = await query(sqlToGetUser);
+        if (!user) {
+            return res.status(401).json({message: 'Invalid username'});
         }
-    })
+        const {salt, id} = user;
+        const role = id === 1 ? 'admin' : 'user';
+        if (hashSync(password, salt) !== user.password) {
+            return res.status(401).json({message: 'Password entered incorrectly'});
+        }
+        const [isTokenAlreadyExists] = await query(sqlToGetToken);
+        if (isTokenAlreadyExists) {
+            query(`DELETE FROM \`tokens\` WHERE id = ${isTokenAlreadyExists.id}`);
+        }
+        const token = randomString();
+        await query(`INSERT INTO \`tokens\` (\`token\`, \`login\`, \`role\`) VALUES ("${token}", "${login}", "${role}")`);
+        res.status(200).json({authorised: true, id, role, token, login, message: 'You have successfully logged in'});
+    } catch {
+        res.status(500).json({message: 'An error occurred while retrieving data'});
+    }
 })
 
-app.post('/authentication/', (req, res) => {
-    const token = req.body.token;
-    const sqlToCheckToken = `SELECT login, token, role FROM \`tokens\` WHERE token = "${token}"`;
+app.post('/authentication/', async (req, res) => {
+    const token = req.body.token,
+        sqlToCheckToken = `SELECT login, token, role FROM \`tokens\` WHERE token = "${token}"`;
 
-    pool.query(sqlToCheckToken, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while retrieving data'})
-        } else if (data.length === 0) {
-            res.status(401).json({authorised: false, message: 'You are not authorized'})
-        } else {
-            res.status(200).json({
-                authorised: true,
-                login: data[0].login,
-                token: data[0].token,
-                role: data[0].role,
-                message: 'You have successfully logged in'
-            });
+    try {
+        const data = await query(sqlToCheckToken);
+        if (!data.length) {
+            return res.status(401).json({authorised: false, message: 'You are not authorized'})
         }
-    })
+        const {login, token, role} = data[0];
+        res.status(200).json({authorised: true, login, token, role, message: 'You have successfully logged in'});
+    } catch {
+        res.status(500).json({message: 'An error occurred while retrieving data'})
+    }
 })
 
 // получение критериев для поиска. данные записываются в Advanced filter
-app.get('/getCriteria/', (req, res) => {
+app.get('/getCriteria/', async (req, res) => {
     const sql = `SELECT \`country\`, \`quality\`, \`composition\` FROM \`coins\``;
 
-    pool.query(sql, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while requesting data'})
-        } else {
-            const country = new Set(),
-                quality = new Set(),
-                composition = new Set();
-            data.map(coin => {
-                // для того чтобы данные не повторялись
-                country.add(coin.country);
-                quality.add(coin.quality);
-                composition.add(coin.composition);
-            })
+    try {
+        const data = await query(sql),
+            country = new Set(),
+            quality = new Set(),
+            composition = new Set();
+        data.map(coin => {
+            // для того чтобы данные не повторялись
+            country.add(coin.country);
+            quality.add(coin.quality);
+            composition.add(coin.composition);
+        })
 
-            const countries = [...country.values()];
-            const qualities = [...quality.values()];
-            const compositions = [...composition.values()];
+        const countries = [...country.values()],
+            qualities = [...quality.values()],
+            compositions = [...composition.values()];
 
-            res.status(200).json({data: {countries, qualities, compositions}})
-        }
-    })
+        res.status(200).json({data: {countries, qualities, compositions}})
+    } catch {
+        res.status(500).json({message: 'An error occurred while requesting data'})
+    }
 })
 
 // запрос данных по всем возможным критериям
-app.post('/coins/', (req, res) => {
+app.post('/coins/', async (req, res) => {
     const {limit, keyword, offset} = req.body.criteria;
     const sqlLimit = limit ? ` LIMIT ${limit} OFFSET ${offset || 0}` : '';
     const filters = [];
@@ -204,88 +170,69 @@ app.post('/coins/', (req, res) => {
         }
     }
 
-    pool.query(sql, (err, count) => {
-        if (err) {
-            res.status(500).json({coins: [], message: 'An error occurred while requesting data'})
-        } else {
-            pool.query(sql + sqlLimit, (err, data) => {
-                if (err) {
-                    res.status(500).json({coins: [], message: 'An error occurred while requesting data'});
-                } else if (data.length === 0) {
-                    res.status(404).json({coins: [], message: 'No coins found for these criteria', notfound: true})
-                } else {
-                    res.status(200).json({coins: data, count: count.length});
-                }
-            })
+    try {
+        const {length} = await query(sql),
+            data = await query(sql + sqlLimit);
+        if (!data.length) {
+            return res.status(404).json({coins: [], message: 'No coins found for these criteria', notfound: true})
         }
-    })
+        res.status(200).json({coins: data, count: length});
+    } catch {
+        res.status(500).json({coins: [], message: 'An error occurred while requesting data'})
+    }
 })
 
-app.get('/coins/:id', (req, res) => {
-    const coinId = req.params.id;
-    const sql = `SELECT * FROM \`coins\` WHERE id = ${coinId}`;
+app.get('/coins/:id', async (req, res) => {
+    const coinId = req.params.id,
+        sql = `SELECT * FROM \`coins\` WHERE id = ${coinId}`,
+        sqlToAddSeen = `UPDATE \`coins\` SET \`seen\` = \`seen\` + 1 WHERE id = ${coinId}`;
 
-    pool.query(sql, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while requesting data'});
-        } else if (data.length === 0) {
-            res.status(404).json({message: 'Coins with the specified id do not exist'});
-        } else {
-            if (req.headers.seen) {
-                pool.query(`UPDATE \`coins\` SET \`seen\` = \`seen\` + 1 WHERE id = ${coinId}`)
-            }
-            res.status(200).json(data[0]);
+    try {
+        const data = await query(sql);
+        if (!data.length) {
+            return res.status(404).json({message: 'Coins with the specified id do not exist'});
         }
-    })
+        req.headers.seen && query(sqlToAddSeen);
+        res.status(200).json(data[0]);
+    } catch {
+        res.status(500).json({message: 'An error occurred while requesting data'});
+    }
 })
 
-app.post('/coins/add/', (req, res) => {
-    const token = req.body.token;
-    const sqlToCheckToken = `SELECT role FROM \`tokens\` WHERE \`token\` = "${token}"`;
-    const coinData = {...COIN_TEMPLATE};
+app.post('/coins/add/', async (req, res) => {
+    const token = req.body.token,
+        sqlToCheckToken = `SELECT role FROM \`tokens\` WHERE \`token\` = "${token}"`,
+        coinData = {...COIN_TEMPLATE};
 
     for (let field in coinData) {
         if (req.body[field]) {
             coinData[field] = req.body[field];
         }
     }
-
-    const keys = [...Object.keys(coinData)];
-    const sql = `INSERT INTO \`coins\` (${keys.map(key => `\`${key}\``).join(", ")}) 
+    const sqlToGetAddedCoin = `SELECT * FROM \`coins\` WHERE name = "${coinData.name}"`;
+    const keys = [...Object.keys(coinData)],
+        sql = `INSERT INTO \`coins\` (${keys.map(key => `\`${key}\``).join(", ")}) 
                  VALUES (${keys.map(key => `"${coinData[key]}"`).join(", ")})`;
 
-    pool.query(sqlToCheckToken, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while requesting data'})
-        } else if (data.length === 0 || data[0].role !== 'admin') {
-            res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
-        } else {
-            pool.query(sql, (err) => {
-                if (err) {
-                    res.status(500).json({message: 'An error occurred while writing data'});
-                } else {
-                    pool.query(`SELECT * FROM \`coins\` WHERE name = "${coinData.name}"`, (err, data) => {
-                        if (err) {
-                            res.status(500).json({message: 'An error occurred while retrieving data'});
-                        } else {
-                            res.status(200).json({
-                                coin: data[0],
-                                added: true,
-                                message: `Coin ${data[0].name} has been successfully added.`
-                            });
-                        }
-                    })
-                }
-            })
+    try {
+        const data = await query(sqlToCheckToken);
+        if (data.length === 0 || data[0].role !== 'admin') {
+            return res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
         }
-    })
+        await query(sql);
+        const [coin] = await query(sqlToGetAddedCoin);
+        res.status(200).json({coin, added: true, message: `Coin ${coin.name} has been successfully added.`});
+    } catch {
+        res.status(500).json({message: 'An error occurred while requesting data'})
+    }
 })
 
-app.put('/coins/:id', (req, res) => {
+app.put('/coins/:id', async (req, res) => {
     const id = req.params.id;
     const coinData = {};
     const token = req.body.token;
     const sqlToCheckToken = `SELECT role FROM \`tokens\` WHERE \`token\` = "${token}"`;
+    const sqlToGetUpdatedCoin = `SELECT * FROM \`coins\` WHERE id = ${id}`;
 
     // получение данных из запроса по шаблону COIN_TEMPLATE
     for (let field in COIN_TEMPLATE) {
@@ -299,70 +246,51 @@ app.put('/coins/:id', (req, res) => {
         .map(key => `\`${key}\` = "${coinData[key]}"`)]
         .join(', ')} WHERE id = ${id}`;
 
-    pool.query(sqlToCheckToken, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while requesting data'})
-        } else if (data.length === 0 || data[0].role !== 'admin') {
-            res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
-        } else {
-            pool.query(sql, err => {
-                if (err) {
-                    res.status(500).json({message: 'An error occurred while saving data'});
-                } else {
-                    pool.query(`SELECT * FROM \`coins\` WHERE id = ${id}`, (err, data) => {
-                        if (err) {
-                            res.status(500).json({message: 'An error occurred while retrieving data'});
-                        } else {
-                            res.status(200).json({
-                                coin: data[0],
-                                edited: true,
-                                message: `Coin ${data[0].name} updated successfully`
-                            });
-                        }
-                    });
-                }
-            })
+    try {
+        const token = await query(sqlToCheckToken);
+        if (token.length === 0 || token[0].role !== 'admin') {
+            return res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
         }
-    })
+        query(sql)
+            .then(() => query(sqlToGetUpdatedCoin))
+            .then(([coin]) => res.status(200).json({
+                coin,
+                edited: true,
+                message: `Coin ${coin.name} updated successfully`
+            }))
+    } catch {
+        res.status(500).json({message: 'An error occurred while retrieving data'});
+    }
 })
 
-app.delete('/coins/:id', (req, res) => {
+app.delete('/coins/:id', async (req, res) => {
     const id = req.params.id;
     const token = req.body.token;
     const sqlToCheckToken = `SELECT role FROM \`tokens\` WHERE \`token\` = "${token}"`;
     const sqlToGetCoin = `SELECT * FROM \`coins\` WHERE id = "${id}"`;
     const sqlToDeleteCoin = `DELETE FROM \`coins\` WHERE id = "${id}"`;
 
-    pool.query(sqlToCheckToken, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while requesting data'})
-        } else if (data.length === 0 || data[0].role !== 'admin') {
-            res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
-        } else {
-            pool.query(sqlToGetCoin, (err, data) => {
-                if (err) {
-                    res.status(500).json({message: 'An error occurred while retrieving data'});
-                } else if (data.length === 0) {
-                    res.status(404).json({message: 'Coins with the specified identifier do not exist'});
-                } else {
-                    pool.query(sqlToDeleteCoin, err => {
-                        if (err) {
-                            res.status(500).json({message: 'An error occurred while deleting data.'})
-                        } else {
-                            res.status(200).json({
-                                data,
-                                deleted: true,
-                                message: `Coin ${data[0].name} removed successfully`
-                            });
-                        }
-                    })
-                }
-            })
+    try {
+        const token = await query(sqlToCheckToken);
+        if (token.length === 0 || token[0].role !== 'admin') {
+            return res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'})
         }
-    })
+        const coin = await query(sqlToGetCoin);
+        if (!coin.length) {
+            return res.status(404).json({message: 'Coins with the specified identifier do not exist'});
+        }
+        query(sqlToDeleteCoin)
+            .then(() => res.status(200).json({
+                coin,
+                deleted: true,
+                message: `Coin ${coin[0].name} removed successfully`
+            }));
+    } catch {
+        res.status(500).json({message: 'An error occurred while requesting data'})
+    }
 })
 
-app.post('/get-comments/', (req, res) => {
+app.post('/get-comments/', async (req, res) => {
     const {token, coinid} = req.body;
     const sqlToCheckToken = `SELECT id FROM \`tokens\` WHERE \`token\` = "${token}"`;
     let sqlToGetComments = `SELECT * FROM \`comments\` WHERE \`type\` = "blog"`;
@@ -370,27 +298,22 @@ app.post('/get-comments/', (req, res) => {
         sqlToGetComments = `SELECT * FROM \`comments\` WHERE \`type\` = "coin" AND coinid = "${coinid}"`;
     }
 
-    pool.query(sqlToCheckToken, (err, data) => {
-        if (err) {
-            res.status(500).json({comments: [], message: 'An error occurred while requesting data'});
-        } else if (data.length === 0) {
-            res.status(401).json({
+    try {
+        const token = await query(sqlToCheckToken);
+        if (token.length === 0) {
+            return res.status(401).json({
                 comments: [],
                 message: 'You do not have sufficient permissions to perform this operation'
             });
-        } else {
-            pool.query(sqlToGetComments, (err, data) => {
-                if (err) {
-                    res.status(500).json({comments: [], message: 'An error occurred while requesting data'});
-                } else {
-                    res.status(200).json({comments: data});
-                }
-            })
         }
-    })
+        query(sqlToGetComments)
+            .then(data => res.status(200).json({comments: data}));
+    } catch {
+        res.status(500).json({comments: [], message: 'An error occurred while requesting data'});
+    }
 })
 
-app.post('/add-comment/', (req, res) => {
+app.post('/add-comment/', async (req, res) => {
     const {userid, comment, type, user, coinid, token} = req.body;
     const sqlToCheckToken = `SELECT id FROM \`tokens\` WHERE \`token\` = "${token}"`;
     const sqlToAddComment = type === 'coin' ?
@@ -399,27 +322,20 @@ app.post('/add-comment/', (req, res) => {
         `INSERT INTO \`comments\` (\`user\`, \`userid\`, \`comment\`) VALUES ("${user}", "${userid}", "${comment}")`;
     const sqlToGetComment = `SELECT * FROM \`comments\` ORDER BY id DESC LIMIT 1`;
 
-    pool.query(sqlToCheckToken, (err, data) => {
-        if (err) {
-            res.status(500).json({message: 'An error occurred while requesting data'})
-        } else if (data.length === 0) {
-            res.status(401).json({message: 'You do not have sufficient permissions to perform this operation'});
-        } else {
-            pool.query(sqlToAddComment, err => {
-                if (err) {
-                    res.status(500).json({message: 'An error occurred while requesting data'})
-                } else {
-                    pool.query(sqlToGetComment, (err, data) => {
-                        if (err) {
-                            res.status(500).json({message: 'An error occurred while requesting data'})
-                        } else {
-                            res.status(200).json({added: true, comment: data[0]})
-                        }
-                    })
-                }
-            })
+    try {
+        const token = await query(sqlToCheckToken);
+        if (token.length === 0) {
+            return res.status(401).json({
+                comments: [],
+                message: 'You do not have sufficient permissions to perform this operation'
+            });
         }
-    })
+        query(sqlToAddComment)
+            .then(() => query(sqlToGetComment))
+            .then(data => res.status(200).json({added: true, comment: data[0]}));
+    } catch {
+        res.status(500).json({message: 'An error occurred while requesting data'})
+    }
 })
 
 app.get('*', (req, res) => {
