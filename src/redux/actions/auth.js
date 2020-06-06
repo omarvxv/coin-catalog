@@ -65,7 +65,7 @@ export const authentication = () => dispatch => {
     // состояние проверки. на стр 78 снимается
     dispatch({type: types.CHECK_TOKEN})
 
-    return fetch('/authentication/', {
+    return fetch('/auth/authentication/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'

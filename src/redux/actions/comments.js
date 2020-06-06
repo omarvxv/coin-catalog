@@ -4,7 +4,7 @@ import {notify} from "./notification";
 export const getComments = (coinid = null) => dispatch => {
     const token = localStorage.getItem('token');
 
-    return fetch('/get-comments/', {
+    return fetch('/comments/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
@@ -23,7 +23,7 @@ export const getComments = (coinid = null) => dispatch => {
 export const addComment = comment => dispatch => {
     const token = localStorage.getItem('token');
 
-    return fetch('/add-comment/', {
+    return fetch('/comments/add/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'

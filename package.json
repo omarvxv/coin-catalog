@@ -29,7 +29,7 @@
     "styled-components": "^5.1.0"
   },
   "scripts": {
-    "start": "nodemon ./src/server.js",
+    "start": "nodemon src/server/app.js",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -38,6 +38,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "proxy": "http://localhost:3001",
   "browserslist": {
     "production": [
       ">0.2%",
