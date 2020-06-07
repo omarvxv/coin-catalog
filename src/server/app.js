@@ -7,7 +7,6 @@ const publicPath = path.join(__dirname, '..', '..', 'build');
 const coinsRoutes = require('./routes/coins');
 const commentsRoutes = require('./routes/comments');
 const criteriaRoutes = require('./routes/criteria');
-const registrationRoutes = require('./routes/registration');
 const authRoutes = require('./routes/auth');
 
 const app = express();
@@ -20,7 +19,6 @@ app.use(cors());
 app.use('/coins/', coinsRoutes);
 app.use('/comments/', commentsRoutes);
 app.use('/criteria/', criteriaRoutes);
-app.use('/registration/', registrationRoutes);
 app.use('/auth/', authRoutes);
 
 app.get('*', (req, res) => {

@@ -17,7 +17,7 @@ function Form({coin, changeHandler, onSubmit, getCoinInfo, clearFields, clearCoi
             clearCoinInfo();
         }
     }, []);
-    // query меняется при завершении запроса. см actions/coin.js :63
+    // query меняется при завершении запроса. см actions/Coin.js :63
     return (!query || canceled) ? <Redirect to="/admin/"/> :
         <div className={Style.fieldsScreen}>
             <div className={Style.column}>

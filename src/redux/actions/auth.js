@@ -22,7 +22,7 @@ export const logout = () => dispatch => {
 }
 
 export const registration = userData => dispatch => {
-    return fetch('/registration/', {
+    return fetch('/auth/registration/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
