@@ -1,38 +1,21 @@
 const {Router} = require('express');
 const Auth = require('../models/Auth');
+const response = require('./response');
 const router = Router();
 
 router.post('/', async (req, res) => {
     const user = new Auth(req.body);
-
-    try {
-        const {status, ...data} = await user.authorization();
-        res.status(status).json(data);
-    } catch {
-        res.status(500).json({message: 'An error occurred while retrieving data'});
-    }
+    await response(res, () => user.authorization());
 })
 
 router.post('/authentication/', async (req, res) => {
     const user = new Auth(req.body);
-
-    try {
-        const {status, ...data} = await user.authentication();
-        res.status(status).json(data);
-    } catch {
-        res.status(500).json({message: 'An error occurred while retrieving data'})
-    }
+    await response(res, () => user.authentication());
 })
 
 router.post('/registration/', async (req, res) => {
     const user = new Auth(req.body);
-
-    try {
-        const {status, ...data} = user.registration();
-        res.status(status).json(data);
-    } catch {
-        res.status(500).json({message: 'An error occurred while retrieving data'});
-    }
+    await response(res, () => user.registration());
 })
 
 module.exports = router;

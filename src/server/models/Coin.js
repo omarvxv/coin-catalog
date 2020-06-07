@@ -27,7 +27,7 @@ class Coin {
                  VALUES (${keys.map(key => `"${this.coin[key]}"`).join(", ")})`;
 
             await query(sql);
-            const {coin} = await this.get();
+            const coin = await this.get();
             return {
                 status: 201,
                 coin,
@@ -47,7 +47,7 @@ class Coin {
                 .join(', ')} WHERE id = ${this.target}`;
 
             await query(sql);
-            const {coin} = await this.get();
+            const coin = await this.get();
             return {
                 status: 200,
                 coin,
@@ -65,15 +65,15 @@ class Coin {
             const sql = `DELETE FROM \`coins\` WHERE id = "${this.target}"`;
 
             const coin = await this.get();
-            if(!coin.coin){
+            if(!coin.id){
                 return coin;
             } else {
                 await query(sql);
                 return {
                     status: 200,
                     deleted: true,
-                    message: `Coin ${coin.coin.name} removed successfully`,
-                    coin: coin.coin
+                    message: `Coin ${coin.name} removed successfully`,
+                    coin
                 }
             }
         } else {
@@ -94,7 +94,7 @@ class Coin {
         }
         return {
             status: 200,
-            coin: data[0]
+            ...data[0]
         }
     }
 
